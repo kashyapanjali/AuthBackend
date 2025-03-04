@@ -24,7 +24,6 @@ router.post("/register", async (req, res) => {
 
 		res.status(200).json({ message: "User registered successfully" });
 	} catch (error) {
-		console.error("Error in /register:", error);
 		res.status(500).json({ message: "Server error" });
 	}
 });
@@ -70,16 +69,33 @@ router.post("/forgot-password", async (req, res) => {
 			auth: { user: process.env.EMAIL, pass: process.env.EMAIL_PASS },
 		});
 
+		const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
+
 		await transporter.sendMail({
 			from: process.env.EMAIL,
 			to: email,
 			subject: "Password Reset",
-			text: `Use this token to reset your password: ${resetToken}`,
+			text: `Click on the following link to reset your password: ${resetLink}`,
+			html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`,
 		});
 
 		res.json({ message: "Reset link sent to email" });
 	} catch (error) {
 		res.status(500).json({ message: "Server error" });
+	}
+});
+
+// Password Reset (Updating Password)
+router.post("/reset-password", async (req, res) => {
+	try {
+		const { token, newPassword } = req.body;
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+		const hashedPassword = await bcrypt.hash(newPassword, 10);
+		await User.findByIdAndUpdate(decoded.id, { password: hashedPassword });
+		res.json({ message: "Password updated successfully" });
+	} catch (error) {
+		res.status(400).json({ message: "Invalid or expired token" });
 	}
 });
 
