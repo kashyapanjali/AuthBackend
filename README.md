@@ -86,5 +86,12 @@ The server should now be running on **http://localhost:5000**
 
 ## Deploy
 
--- **Database**:MongoDB Atlas
--- **Backend**:Render
+- **Database**:MongoDB Atlas.
+- **Backend**:Render.
+
+## Live Server Link
+
+```sh
+https://user-auth-system-jv7o.onrender.com
+
+```
