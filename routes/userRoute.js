@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/users");
 const nodemailer = require("nodemailer");
-
+const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
 // Register Route
@@ -96,6 +96,37 @@ router.post("/reset-password", async (req, res) => {
 		res.json({ message: "Password updated successfully" });
 	} catch (error) {
 		res.status(400).json({ message: "Invalid or expired token" });
+	}
+});
+
+//to verify the token
+
+router.get("/profile", authMiddleware, async (req, res) => {
+	const user = await User.findById(req.user.id).select("-password");
+	res.json(user);
+});
+
+// Get Username
+router.get("/getusername", authMiddleware, async (req, res) => {
+	try {
+		const user = await User.findById(req.user.id);
+		if (!user) return res.status(404).json({ message: "User not found" });
+
+		res.json({ username: user.name });
+	} catch (error) {
+		res.status(500).json({ message: "Server error" });
+	}
+});
+
+// Get User Email
+router.get("/getuseremail", authMiddleware, async (req, res) => {
+	try {
+		const user = await User.findById(req.user.id);
+		if (!user) return res.status(404).json({ message: "User not found" });
+
+		res.json({ email: user.email });
+	} catch (error) {
+		res.status(500).json({ message: "Server error" });
 	}
 });
 
