@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/users");
 const nodemailer = require("nodemailer");
 const authMiddleware = require("../middleware/authMiddleware");
+// const { body, validationResult } = require("express-validator");
+
 const router = express.Router();
 
 // Register Route
@@ -101,7 +103,7 @@ router.post("/reset-password", async (req, res) => {
 
 //to verify the token
 
-router.get("/profile", authMiddleware, async (req, res) => {
+router.get("/users/profile", authMiddleware, async (req, res) => {
 	const user = await User.findById(req.user.id).select("-password");
 	res.json(user);
 });
