@@ -83,3 +83,8 @@ The server should now be running on **http://localhost:5000**
 - **Error Handling**: Provides clear error messages and status codes.
 
 ---
+
+## Deploy
+
+-- **Database**:MongoDB Atlas
+-- **Backend**:Render
